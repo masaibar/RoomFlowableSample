@@ -15,4 +15,7 @@ interface TimeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(time: Time): Long
 
+    @Query("DELETE FROM time")
+    fun deleteAll()
+
 }

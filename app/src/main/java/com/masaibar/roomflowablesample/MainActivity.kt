@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -26,31 +27,10 @@ class MainActivity : AppCompatActivity() {
             this.addItemDecoration(
                     DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL)
             )
-            this.layoutManager = LinearLayoutManager(this@MainActivity).apply {
-                this.stackFromEnd = true
-            }
+            this.layoutManager = LinearLayoutManager(this@MainActivity)
         }
 
         val db = AppDatabase.create(this)
-
-        button_insert.setOnClickListener {
-            Single.fromCallable {
-                db.getTimeDao().insert(
-                        Time(time = Date().time)
-                )
-            }.subscribeOn(
-                    Schedulers.io()
-            ).subscribeBy(
-                    onError = { t ->
-                        Log.d("!!!", "insert error ${t.message}")
-                    },
-                    onSuccess = { id ->
-                        Log.d("!!!", "insert success, id = $id")
-                    }
-
-            ).addTo(disposable)
-        }
-
 
         db.getTimeDao().selectAll().subscribeOn(
                 Schedulers.io()
@@ -74,14 +54,45 @@ class MainActivity : AppCompatActivity() {
                         val adapter = recycler_view.adapter as TimeAdapter
                         adapter.update(times)
 
-//                        最下部までスクロールさせる
-//                        recycler_view.post{
-//                            recycler_view.smoothScrollToPosition(adapter.itemCount -1)
-//                        }
+                        //最下部までスクロールさせる
+                        recycler_view.post {
+                            val itemCount = adapter.itemCount
+                            recycler_view.smoothScrollToPosition(if (itemCount > 0) itemCount - 1 else 0)
+                        }
 
                     }
                 }
         ).addTo(disposable)
+
+        button_insert.setOnClickListener {
+            Single.fromCallable {
+                db.getTimeDao().insert(
+                        Time(time = Date().time)
+                )
+            }.subscribeOn(
+                    Schedulers.io()
+            ).subscribeBy(
+                    onError = { t ->
+                        Log.d("!!!", "insert error ${t.message}")
+                    },
+                    onSuccess = { id ->
+                        Log.d("!!!", "insert success, id = $id")
+                    }
+
+            ).addTo(disposable)
+        }
+
+        button_clear_all.setOnClickListener {
+            Completable.fromAction {
+                db.getTimeDao().deleteAll()
+            }.subscribeOn(
+                    Schedulers.io()
+            ).subscribeBy(
+                    onError = { t ->
+                        Log.d("!!!", "delete error ${t.message}")
+                    }
+            ).addTo(disposable)
+        }
     }
 
     override fun onDestroy() {

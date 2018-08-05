@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#33FFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#33FFFF"
     tools:context=".MainActivity">
 
     <android.support.v7.widget.RecyclerView
@@ -24,7 +24,17 @@
         android:layout_height="wrap_content"
         android:text="insert"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_clear_all"
         app:layout_constraintStart_toStartOf="parent"/>
+
+    <Button
+        android:id="@+id/button_clear_all"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="clear all"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_insert"
+        />
 
 </android.support.constraint.ConstraintLayout>

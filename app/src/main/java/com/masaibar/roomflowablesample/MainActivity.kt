@@ -73,6 +73,12 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         val adapter = recycler_view.adapter as TimeAdapter
                         adapter.update(times)
+
+//                        最下部までスクロールさせる
+//                        recycler_view.post{
+//                            recycler_view.smoothScrollToPosition(adapter.itemCount -1)
+//                        }
+
                     }
                 }
         ).addTo(disposable)

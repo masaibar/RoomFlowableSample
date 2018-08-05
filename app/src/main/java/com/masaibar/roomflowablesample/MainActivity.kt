@@ -7,12 +7,16 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    private val disposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +26,9 @@ class MainActivity : AppCompatActivity() {
             this.addItemDecoration(
                     DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL)
             )
-            this.layoutManager = LinearLayoutManager(this@MainActivity)
+            this.layoutManager = LinearLayoutManager(this@MainActivity).apply {
+                this.stackFromEnd = true
+            }
         }
 
         val db = AppDatabase.create(this)
@@ -42,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                         Log.d("!!!", "insert success, id = $id")
                     }
 
-            )
+            ).addTo(disposable)
         }
 
 
@@ -69,7 +75,11 @@ class MainActivity : AppCompatActivity() {
                         adapter.update(times)
                     }
                 }
-        )
+        ).addTo(disposable)
     }
 
+    override fun onDestroy() {
+        disposable.clear()
+        super.onDestroy()
+    }
 }

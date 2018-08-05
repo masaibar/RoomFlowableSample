@@ -8,4 +8,15 @@ import android.support.annotation.NonNull
 class Time(
         @PrimaryKey(autoGenerate = true) var id: Long = 0,
         @NonNull var time: Long
-)
+) {
+
+    override fun toString(): String {
+        return "id = $id, time = $time"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is Time &&
+                this.id == other.id &&
+                this.time == other.time
+    }
+}

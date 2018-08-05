@@ -51,22 +51,22 @@ class MainActivity : AppCompatActivity() {
         ).observeOn(
                 AndroidSchedulers.mainThread()
         ).subscribeBy(
-                onError = { t->
+                onError = { t ->
                     Log.d("!!!", "times error, ${t.message}")
                 },
                 onComplete = {
                     Log.d("!!!", "times complete")
                 },
                 onNext = { times ->
+                    Log.d("!!!", "times onNext")
+                    if (recycler_view.adapter == null) {
                         recycler_view.adapter = TimeAdapter(
                                 this,
                                 times
                         )
+                    } else {
                         val adapter = recycler_view.adapter as TimeAdapter
                         adapter.update(times)
-
-                    times.forEach { time ->
-                        Log.d("!!!", "time $time")
                     }
                 }
         )
